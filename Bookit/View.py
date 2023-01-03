@@ -5,6 +5,8 @@ class View(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
         self.main_frame = MainFrame(self)
+        self.main_frame.pack()
+
         self.frames = self.main_frame,
 
 
@@ -26,11 +28,15 @@ class MainFrame(tk.Frame):
         self.xfer_buttons.pack(side=tk.LEFT)
 
         # ToKoboButton
-        self.to_kobo_button = tk.Button(self.xfer_buttons, text='\u27F5')
+        self.to_kobo_button = tk.Button(self.xfer_buttons,
+                                        state=tk.DISABLED,
+                                        text='\u27F5')
         self.to_kobo_button.pack(side=tk.TOP)
 
         # ToLocalButton
-        self.to_local_button = tk.Button(self.xfer_buttons, text='\u27F6')
+        self.to_local_button = tk.Button(self.xfer_buttons,
+                                         state=tk.DISABLED,
+                                         text='\u27F6')
         self.to_local_button.pack(side=tk.BOTTOM)
 
         # LocalBooksContainer
@@ -42,27 +48,27 @@ class MainFrame(tk.Frame):
 
         # UtilityButtonContainer
         self.utility_buttons = tk.Frame(self)
-        self.utility_buttons.pack()
+        self.utility_buttons.pack(side=tk.LEFT)
 
         # AddBookButton
         self.add_book_button = tk.Button(self.utility_buttons,
                                          text='Add Book')
-        self.add_book_button.pack(side=tk.BOTTOM)
+        self.add_book_button.pack()
 
         # RemoveBookButton
         self.remove_book_button = tk.Button(self.utility_buttons,
                                             text='Remove Book')
-        self.remove_book_button.pack(side=tk.BOTTOM)
+        self.remove_book_button.pack()
 
         # DisconnectButton
         self.disconnect_button = tk.Button(self.utility_buttons,
                                            text='Disconnect')
-        self.disconnect_button.pack(side=tk.BOTTOM)
+        self.disconnect_button.pack()
 
         # RefreshButton
         self.refresh_button = tk.Button(self.utility_buttons,
                                         text='Refresh')
-        self.remove_book_button.pack(side=tk.BOTTOM)
+        self.remove_book_button.pack()
 
         # QuitButton
         self.quit_button = tk.Button(self.utility_buttons,
