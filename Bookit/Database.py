@@ -2,7 +2,6 @@ from pathlib import Path
 
 import sqlalchemy.orm
 
-
 USR: Path = Path('/Users/adrian.mac')
 BOOKS: Path = USR / 'Books'
 KOBO: Path = Path('/Volumes/KoboeReader')
@@ -16,15 +15,15 @@ ENGINE_PATH = 'sqlite:///' + str(DB_PATH)
 class Book(Base):
     __tablename__ = 'book'
 
-    title =    sqlalchemy.Column(sqlalchemy.String, primary_key=True)
-    year =     sqlalchemy.Column(sqlalchemy.Integer)
-    lname =    sqlalchemy.Column(sqlalchemy.String)
-    fname =    sqlalchemy.Column(sqlalchemy.String)
+    title = sqlalchemy.Column(sqlalchemy.String, primary_key=True)
+    year = sqlalchemy.Column(sqlalchemy.Integer)
+    lname = sqlalchemy.Column(sqlalchemy.String)
+    fname = sqlalchemy.Column(sqlalchemy.String)
     is_local = sqlalchemy.Column(sqlalchemy.Boolean)
-    
+
     def __repr__(self):
-        return f'Book(title={self.title!r}, year={self.year!r}, '\
-               f'lname={self.lname!r}, fname={self.fname!r}, '\
+        return f'Book(title={self.title!r}, year={self.year!r}, ' \
+               f'lname={self.lname!r}, fname={self.fname!r}, ' \
                f'local={self.is_local!r}'
 
 
@@ -32,14 +31,14 @@ def sql_engine():
     return sqlalchemy.create_engine(ENGINE_PATH, echo=True, future=True)
 
 
-def add_book(title: str, year: int, lname: str, fname: str, local: bool) -> None:
+def add_book(title: str, year: int, lname: str, fname: str, is_local: bool) -> None:
     with sqlalchemy.orm.Session(sql_engine()) as session:
-        new_book = Book(title=title, year=year, lname=lname, fname=fname)
+        new_book = Book(title=title, year=year, lname=lname, fname=fname, is_local=is_local)
         session.add(new_book)
         session.commit()
 
 
-def update_book(title: str, year: str, lname: str, fname: str) -> None:
+def update_book(title: str, year: int, lname: str, fname: str, is_local: bool) -> None:
     with sqlalchemy.orm.Session(sql_engine()) as session:
         statement = sqlalchemy.select(Book).where(Book.title == title)
         book = session.scalar(statement)
@@ -48,25 +47,28 @@ def update_book(title: str, year: str, lname: str, fname: str) -> None:
         book.year = year
         book.lname = lname
         book.fname = fname
+        book.is_local = is_local
 
         session.commit()
 
 
-def get_book(title: str) -> Book | None:
+def get_book(title: str) -> Book:
     with sqlalchemy.orm.Session(sql_engine()) as session:
         statement = sqlalchemy.select(Book).where(Book.title == title)
         book = session.scalar(statement)
+    if book is None:
+        raise ValueError(f'Requested title \'{title}\' not in database.')
     return book
 
 
-def remove_book(name: str) -> None:
+def remove_book(title: str) -> None:
     with sqlalchemy.orm.Session(sql_engine()) as session:
         session.execute(sqlalchemy.delete(Book).where(Book.title == title))
         session.commit()
 
 
 def get_column(column: str) -> list[str]:
-    if column not in {'title', 'year', 'lname', 'fname'}:
+    if column not in {'title', 'year', 'lname', 'fname', 'is_local'}:
         raise ValueError(f'Requested column \'{column}\' not in database.')
     with sqlalchemy.orm.Session(sql_engine()) as session:
         statement = sqlalchemy.select(getattr(Book, column))
@@ -78,13 +80,7 @@ def get_column(column: str) -> list[str]:
     return column_contents
 
 
-def move_local_to_kobo(title: str) -> None:
-    if 
-
-
 if not DB_PATH.exists():
     if not BOOKS.exists():
         BOOKS.mkdir()
     Base.metadata.create_all(sql_engine())
-    
-
