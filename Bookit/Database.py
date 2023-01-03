@@ -84,3 +84,21 @@ if not DB_PATH.exists():
     if not BOOKS.exists():
         BOOKS.mkdir()
     Base.metadata.create_all(sql_engine())
+
+
+def get_kobo_books() -> list[Book]:
+    with sqlalchemy.orm.Session(sql_engine()) as session:
+        statement = sqlalchemy.select(Book).where(Book.is_local)
+        scalars = session.scalars(statement)
+        if not scalars:
+            return []
+        return scalars.fetchall()
+
+
+def get_local_books():
+    with sqlalchemy.orm.Session(sql_engine()) as session:
+        statement = sqlalchemy.select(Book).where(not Book.is_local)
+        scalars = session.scalars(statement)
+        if not scalars:
+            return []
+        return scalars.fetchall()
