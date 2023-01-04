@@ -20,6 +20,9 @@ class Controller:
         # Configure local book list.
         self.main_frame.local_books.bind('<<ListboxSelect>>', self.local_books_list_select)
 
+        # Configure Kobo <-- Local button
+        self.main_frame.to_kobo_button.configure(command=self.move_local_to_kobo)
+
         # Configure Quit button.
         self.main_frame.quit_button.configure(command=self.quit)
 
@@ -57,6 +60,10 @@ class Controller:
             return
         self.main_frame.to_kobo_button.configure(state=tk.NORMAL)
         self.main_frame.to_local_button.config(state=tk.DISABLED)
+        
+    def move_local_to_kobo(self) -> None:
+        selection = self.main_frame.local_book_var.get()
+        # TODO: this method 
 
     def quit(self) -> None:
         self.view.destroy()
