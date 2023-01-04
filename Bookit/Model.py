@@ -1,5 +1,6 @@
 from collections import namedtuple
 from pathlib import Path
+import subprocess
 
 from Bookit import Database
 
@@ -31,7 +32,7 @@ class Model:
         ]
 
     def move_local_to_kobo(self, book) -> None:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def move_kobo_to_local(self, book) -> None:
         raise NotImplementedError
@@ -43,4 +44,4 @@ class Model:
         raise NotImplementedError
 
     def disconnect(self) -> None:
-        raise NotImplementedError
+        subprocess.Popen(['diskutil', 'eject', KOBO], shell=True)

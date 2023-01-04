@@ -70,7 +70,7 @@ class MainFrame(tk.Frame):
         # RefreshButton
         self.refresh_button = tk.Button(self.utility_buttons,
                                         text='Refresh')
-        self.remove_book_button.pack()
+        self.refresh_button.pack()
 
         # QuitButton
         self.quit_button = tk.Button(self.utility_buttons,
