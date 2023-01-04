@@ -29,3 +29,18 @@ class Model:
             Book(book.title, book.year, book.lname, book.fname, book.is_local)
             for book in Database.get_local_books()
         ]
+
+    def move_local_to_kobo(self, book) -> None:
+        raise NotImplementedError()
+
+    def move_kobo_to_local(self, book) -> None:
+        raise NotImplementedError
+
+    def add_book(self) -> None:
+        raise NotImplementedError
+
+    def remove_book(self, book) -> None:
+        raise NotImplementedError
+
+    def disconnect(self) -> None:
+        raise NotImplementedError

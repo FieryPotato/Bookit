@@ -57,12 +57,14 @@ class MainFrame(tk.Frame):
 
         # RemoveBookButton
         self.remove_book_button = tk.Button(self.utility_buttons,
-                                            text='Remove Book')
+                                            text='Remove Book',
+                                            state=tk.DISABLED)
         self.remove_book_button.pack()
 
         # DisconnectButton
         self.disconnect_button = tk.Button(self.utility_buttons,
-                                           text='Disconnect')
+                                           text='Disconnect Kobo',
+                                           state=tk.DISABLED)
         self.disconnect_button.pack()
 
         # RefreshButton
