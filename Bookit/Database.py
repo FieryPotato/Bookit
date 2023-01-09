@@ -5,7 +5,7 @@ import sqlalchemy.orm
 USR: Path = Path('/Users/adrian.mac')
 BOOKS: Path = USR / 'Books'
 KOBO: Path = Path('/Volumes/KoboeReader')
-Downloads: Path = USR / 'Downloads'
+DOWNLOADS: Path = USR / 'Downloads'
 DB_PATH: Path = BOOKS / 'books.db'
 
 Base = sqlalchemy.orm.declarative_base()
@@ -88,7 +88,7 @@ if not DB_PATH.exists():
 
 def get_kobo_books() -> list[Book]:
     with sqlalchemy.orm.Session(sql_engine()) as session:
-        statement = sqlalchemy.select(Book).where(Book.is_local)
+        statement = sqlalchemy.select(Book).where(Book.is_local == False)
         scalars = session.scalars(statement)
         if not scalars:
             return []
@@ -97,7 +97,7 @@ def get_kobo_books() -> list[Book]:
 
 def get_local_books():
     with sqlalchemy.orm.Session(sql_engine()) as session:
-        statement = sqlalchemy.select(Book).where(not Book.is_local)
+        statement = sqlalchemy.select(Book).where(Book.is_local == True)
         scalars = session.scalars(statement)
         if not scalars:
             return []

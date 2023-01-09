@@ -1,6 +1,7 @@
 import tkinter as tk
+from tkinter import filedialog as fd
 
-from Bookit.Model import Model
+from Bookit.Model import Model, DOWNLOADS
 from Bookit.View import View
 
 
@@ -9,8 +10,10 @@ class Controller:
         self.model = model
         self.view = view
         self.main_frame = self.view.main_frame
+        self.add_frame = self.view.add_book_frame
         self.refresh()
 
+        # Configure Main Frame
         # Configure kobo book list.
         self.main_frame.kobo_books.bind('<<ListboxSelect>>', self.kobo_books_list_select)
 
@@ -37,6 +40,13 @@ class Controller:
 
         # Configure Quit button.
         self.main_frame.quit_button.configure(command=self.quit)
+
+        # Configure Add Book Frame
+        # Configure RadioButtons
+        # Configure Continue Button
+        self.add_frame.continue_button.configure(command=self.add_book_continue)
+        # Configure Cancel Button
+        self.add_frame.cancel_button.configure(command=self.surface_main_frame)
 
     def start(self) -> tk.Tk:
         self.view.title('Bookit')
@@ -86,8 +96,28 @@ class Controller:
         self.refresh()
 
     def add_book_callback(self) -> None:
-        self.model.add_book()
+        """Callback for the Add Book button in the Main frame."""
+        self.surface_add_book()
         self.refresh()
+
+    def add_book_continue(self) -> None:
+        """Callback for the Continue button in the Add Book frame."""
+        path: str = fd.askopenfilename(initialdir=DOWNLOADS)
+        title = self.add_frame.title_entry_var.get()
+        fname = self.add_frame.fname_entry_var.get()
+        lname = self.add_frame.lname_entry_var.get()
+        year = int(self.add_frame.year_entry_var.get())
+        is_local = self.add_frame.radio_var.get()
+        self.model.add_book(
+            path=path,
+            title=title,
+            year=year,
+            lname=lname,
+            fname=fname,
+            is_local=is_local
+        )
+        self.surface_main_frame()
+
 
     def remove_book_callback(self) -> None:
         if self.main_frame.kobo_books.curselection():
@@ -103,11 +133,34 @@ class Controller:
         self.model.disconnect()
         self.refresh()
 
+    def surface_add_book(self):
+        self.pack_forget()
+        self.view.add_book_frame.pack()
+        self.reset_fields()
+
+    def surface_main_frame(self):
+        self.pack_forget()
+        self.view.main_frame.pack()
+        self.reset_fields()
+
+    def reset_fields(self) -> None:
+        for frame in self.view.frames:
+            for attribute, variable in frame.defaults.items():
+                getattr(frame, attribute).set(variable)
+
+    def pack_forget(self) -> None:
+        for frame in self.view.frames:
+            frame.pack_forget()
+
     def refresh(self) -> None:
         if self.model.kobo_is_connected():
             self.main_frame.disconnect_button.configure(state=tk.NORMAL)
+            self.add_frame.radio_var.set(False)
+            self.add_frame.kobo_radio.configure(state=tk.NORMAL)
         else:
             self.main_frame.disconnect_button.configure(state=tk.DISABLED)
+            self.add_frame.radio_var.set(True)
+            self.add_frame.kobo_radio.configure(state=tk.DISABLED)
         self.initialize_local_books()
         self.initialize_kobo_books()
 
