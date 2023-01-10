@@ -116,8 +116,8 @@ class Controller:
             fname=fname,
             is_local=is_local
         )
+        self.refresh()
         self.surface_main_frame()
-
 
     def remove_book_callback(self) -> None:
         if self.main_frame.kobo_books.curselection():
@@ -163,6 +163,9 @@ class Controller:
             self.add_frame.kobo_radio.configure(state=tk.DISABLED)
         self.initialize_local_books()
         self.initialize_kobo_books()
+        max_width = max(len(str(item)) for item in self.main_frame.listbox_contents)
+        for listbox in self.main_frame.listboxes:
+            listbox.configure(width=max_width)
 
     def quit(self) -> None:
         self.view.destroy()

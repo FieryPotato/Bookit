@@ -28,7 +28,7 @@ class Book(Base):
 
 
 def sql_engine():
-    return sqlalchemy.create_engine(ENGINE_PATH, echo=True, future=True)
+    return sqlalchemy.create_engine(ENGINE_PATH, future=True)
 
 
 def add_book(title: str, year: int, lname: str, fname: str, is_local: bool) -> None:

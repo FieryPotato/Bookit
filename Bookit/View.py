@@ -1,4 +1,6 @@
 import tkinter as tk
+from tkinter import Listbox
+from typing import Tuple
 
 
 class View(tk.Tk):
@@ -28,7 +30,6 @@ class MainFrame(tk.Frame):
                                      height=self.list_var_height,
                                      width=self.list_var_width)
         self.kobo_books.pack(side=tk.LEFT)
-        self.kobo_scroll_bar = tk.Scroll
 
         # XferButtonContainer
         self.xfer_buttons = tk.Frame(self)
@@ -84,6 +85,16 @@ class MainFrame(tk.Frame):
         self.quit_button = tk.Button(self.utility_buttons,
                                      text='Quit')
         self.quit_button.pack(side=tk.BOTTOM)
+
+    @property
+    def listbox_contents(self) -> list[str]:
+        kobo = self.kobo_book_var.get()
+        local = self.local_book_var.get()
+        return kobo + local
+
+    @property
+    def listboxes(self) -> list[Listbox]:
+        return [self.kobo_books, self.local_books]
 
 
 class AddBookFrame(tk.Frame):

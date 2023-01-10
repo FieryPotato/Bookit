@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 import subprocess
 
@@ -16,32 +17,42 @@ class Model:
         """Return whether kobo device is connected."""
         return KOBO.exists()
 
-    def get_kobo_books(self) -> list[Move.Book]:
+    def get_kobo_books(self) -> list[tuple]:
         """Return a list containing books currently on the Kobo."""
-        books = [
+        raw_books = [
             Move.Book(book.title, book.year, book.lname, book.fname, book.is_local)
             for book in Database.get_kobo_books()
         ]
-        edited = [(book.title, book.lname, book.year) for book in books]
-        return edited
+        books = [(book.title, book.lname, book.year) for book in raw_books]
+        return books
 
-    def get_local_books(self) -> list[Move.Book]:
-        return [
+    def get_local_books(self) -> list[tuple]:
+        raw_books = [
             Move.Book(book.title, book.year, book.lname, book.fname, book.is_local)
             for book in Database.get_local_books()
         ]
+        books = [(book.title, book.lname, book.year) for book in raw_books]
+        return books
 
     def move_local_to_kobo(self, title) -> None:
+        # Match everything inside but not including curly braces
+        # Curly braces are an artifact of tkinter rendering \' and \" characters
+        title = re.match(r'{.+}', title).group()[1:-1]
+
         book = Database.get_book(title)
         mover = Move.Mover(book=book)
-        if mover.local_to_kobo():
-            Database.update_book(book.title, book.year, book.lname, book.fname, True)
+        mover.local_to_kobo()
+        Database.update_book(book.title, book.year, book.lname, book.fname, True)
 
     def move_kobo_to_local(self, title) -> None:
+        # Match everything inside but not including curly braces
+        # Curly braces are an artifact of tkinter rendering \' and \" characters
+        title = re.match(r'{.+}', title).group()[1:-1]
+
         book = Database.get_book(title)
         mover = Move.Mover(book=book)
-        if mover.kobo_to_local():
-            Database.update_book(book.title, book.year, book.lname, book.fname, False)
+        mover.kobo_to_local()
+        Database.update_book(book.title, book.year, book.lname, book.fname, False)
 
     def add_book(self, path, title, year, lname, fname, is_local) -> None:
         book = Move.Book(title, year, lname, fname, is_local)
