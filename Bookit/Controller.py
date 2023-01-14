@@ -16,6 +16,7 @@ class Controller:
         # Configure Main Frame
         # Configure kobo book list.
         self.main_frame.kobo_books.bind('<<ListboxSelect>>', self.kobo_books_list_select)
+        self.main_frame.kobo_books.bind('<Button-1>', self.kobo_books_list_select)
 
         # Configure Kobo <-- Local button.
         self.main_frame.to_kobo_button.configure(command=self.move_local_to_kobo)
@@ -25,6 +26,7 @@ class Controller:
 
         # Configure local book list.
         self.main_frame.local_books.bind('<<ListboxSelect>>', self.local_books_list_select)
+        self.main_frame.local_books.bind('<Button-1>', self.local_books_list_select)
 
         # Configure Add Book Button.
         self.main_frame.add_book_button.configure(command=self.add_book_callback)
@@ -57,7 +59,7 @@ class Controller:
         if not self.model.kobo_is_connected():
             book_list = ['Kobo Is Not Connected']
             for book in kobo_books:
-                book_list.append(f'<{book}>')
+                book_list.append(f'{book}')
             self.main_frame.kobo_book_var.set(book_list)
             self.main_frame.kobo_books.configure(state=tk.DISABLED)
             return
@@ -69,21 +71,19 @@ class Controller:
 
     def kobo_books_list_select(self, *_) -> None:
         if not self.model.kobo_is_connected():
-            return
-        if not self.main_frame.kobo_books.selection_get():
-            return
+            self.main_frame.to_kobo_button.configure(state=tk.DISABLED)
+            self.main_frame.to_local_button.configure(state=tk.DISABLED)
+        self.main_frame.remove_book_button.configure(state=tk.NORMAL)
         self.main_frame.to_kobo_button.configure(state=tk.DISABLED)
         self.main_frame.to_local_button.configure(state=tk.NORMAL)
-        self.main_frame.remove_book_button.configure(state=tk.NORMAL)
 
     def local_books_list_select(self, *_) -> None:
         if not self.model.kobo_is_connected():
-            return
-        if not self.main_frame.local_books.selection_get():
-            return
+            self.main_frame.to_kobo_button.configure(state=tk.DISABLED)
+            self.main_frame.to_local_button.configure(state=tk.DISABLED)
+        self.main_frame.remove_book_button.configure(state=tk.NORMAL)
         self.main_frame.to_kobo_button.configure(state=tk.NORMAL)
         self.main_frame.to_local_button.configure(state=tk.DISABLED)
-        self.main_frame.remove_book_button.configure(state=tk.NORMAL)
 
     def move_local_to_kobo(self) -> None:
         selection = self.main_frame.local_books.selection_get()
@@ -131,6 +131,7 @@ class Controller:
 
     def disconnect_callback(self) -> None:
         self.model.disconnect()
+        self.initialize_kobo_books()
         self.refresh()
 
     def surface_add_book(self):

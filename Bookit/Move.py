@@ -90,14 +90,14 @@ class Mover:
     def local_to_kobo(self) -> None:
         """Move self.source to the device. Return whether move was successful."""
         if not self.local_path().exists():
-            print('Book {self.book!r} does not exist.')
+            print(f'Book {self.book!r} does not exist.')
             return
         shutil.move(self.local_path(), self.kobo_path())
 
     def kobo_to_local(self) -> None:
         """Move self.source to the local folder. Return whether move was successful."""
         if not self.kobo_path().exists():
-            print('Book {self.book!r} does not exist.')
+            print(f'Book {self.book!r} does not exist.')
             return
         shutil.move(self.kobo_path(), self.local_path())
 

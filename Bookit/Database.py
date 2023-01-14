@@ -40,15 +40,19 @@ def add_book(title: str, year: int, lname: str, fname: str, is_local: bool) -> N
 
 def update_book(title: str, year: int, lname: str, fname: str, is_local: bool) -> None:
     with sqlalchemy.orm.Session(sql_engine()) as session:
-        statement = sqlalchemy.select(Book).where(Book.title == title)
-        book = session.scalar(statement)
-
-        book.title = title
-        book.year = year
-        book.lname = lname
-        book.fname = fname
-        book.is_local = is_local
-
+        # Chained dots on separate lines for legibility.
+        # This is all one statement with parenthetical line continuation.
+        statement = (
+            sqlalchemy.update(Book)
+            .where(Book.title == title)
+            .values(
+                year=year,
+                lname=lname,
+                fname=fname,
+                is_local=is_local
+            )
+        )
+        session.execute(statement)
         session.commit()
 
 

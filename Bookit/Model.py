@@ -42,7 +42,7 @@ class Model:
         book = Database.get_book(title)
         mover = Move.Mover(book=book)
         mover.local_to_kobo()
-        Database.update_book(book.title, book.year, book.lname, book.fname, True)
+        Database.update_book(book.title, book.year, book.lname, book.fname, is_local=False)
 
     def move_kobo_to_local(self, title) -> None:
         # Match everything inside but not including curly braces
@@ -52,7 +52,7 @@ class Model:
         book = Database.get_book(title)
         mover = Move.Mover(book=book)
         mover.kobo_to_local()
-        Database.update_book(book.title, book.year, book.lname, book.fname, False)
+        Database.update_book(book.title, book.year, book.lname, book.fname, is_local=True)
 
     def add_book(self, path, title, year, lname, fname, is_local) -> None:
         book = Move.Book(title, year, lname, fname, is_local)
